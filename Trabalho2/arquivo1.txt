@@ -1,0 +1,11 @@
+11
+##########
+#VVV#VVVX#
+#VVV#WVW*#
+#VVV#WWW*#
+#VVV#****#
+#VVV#*VVV#
+#VVV**VVV#
+#VVVOVVVV#
+#VVVVVVVV#
+##########
