@@ -6,23 +6,23 @@
 #define Infinity 1000;
 /*
 <<<LABEL>>>
-O: posição do Dalton;
-X: entrada da caverna;
-V: caminho livre;
-#: caminho ocupado;
-W: caminho de grama alta.
+O: Dalton's position;
+X: Cave entrance;
+V: free pass;
+#: blocked pass;
+W: High grass;
 */
 
 typedef struct no
 {
     int X;
     int Y;
-    char label;//LABEL
+    char label; //Label
     int DisX;
     int DisO;
     int custoF;
-    int ID;//Com quem está ligada
-    struct no *prox;
+    int ID; //Linked with
+    struct no *next;
 } next;
 
 typedef struct Grid
@@ -30,47 +30,47 @@ typedef struct Grid
     int X;
     int Y;
     int CustP;
-    int numPos;//Numero do nó
+    int numPos; //Number of nodes
     char label;
     next *adj;
-    struct Grid *prox;
+    struct Grid *next;
 } Grid;
 
-typedef struct Lista
+typedef struct List
 {
     next A;
 
-} *Lista;
+} *List;
 
-typedef struct ListaG
+typedef struct ListG
 {
     Grid G;
 
-} *ListaG;
+} *ListG;
 
-Grid* cria_No(Grid *A)
+Grid* createNode(Grid *A)
 {
     A = (Grid*)malloc(sizeof(Grid));
     A->adj = NULL;
-    A->prox = NULL;
+    A->next = NULL;
 
     return A;
 }
 
-void inserirNo(Grid *G, int i, char ch)
+void insertNode(Grid *G, int i, char ch)
 {
     Grid* aux;
 
-    if(G->prox == NULL)
+    if(G->next == NULL)
     {
-        aux = cria_No(aux);
+        aux = createNode(aux);
         aux->numPos = i;
-        G->prox = aux;
+        G->next = aux;
         G->label = ch;
     }
     else
     {
-        inserirNo(G->prox,i,ch);
+        insertNode(G->next,i,ch);
     }
 }
 
@@ -84,38 +84,26 @@ void imprimeNo(Grid* G)
     printf("%d ", G->numPos);
 }
 
-char pesquisa(Grid *G, int y)
-{
-    Grid *aux;
-    aux = G;
-    while(aux->numPos != y)
-    {
-        aux = aux->prox;
-    }
-
-    return aux->label;
-}
-
 Grid* Search(Grid *G, int y)
 {
     Grid *aux;
     aux = G;
     while(aux->numPos != y)
     {
-        aux = aux->prox;
+        aux = aux->next;
     }
 
     return aux;
 }
 
-next* cria_aresta(next *A, int y, int n,Grid *G)
+next* create_edge(next *A, int y, int n,Grid *G)
 {
     Grid *aux;
     aux = G;
 
     while(aux->numPos != y)
     {
-        aux = aux->prox;
+        aux = aux->next;
     }
     if(A == NULL)
     {
@@ -137,7 +125,7 @@ next* cria_aresta(next *A, int y, int n,Grid *G)
             }
 
             A->label = aux->label;
-            A->prox = NULL;
+            A->next = NULL;
         }
         else
             return NULL;
@@ -146,48 +134,48 @@ next* cria_aresta(next *A, int y, int n,Grid *G)
     {
         if(A->ID == y)
         {
-            printf("Ja existe aresta %d!\n", y);
+            printf("Edge already exist %d!\n", y);
             return A;
         }
         else
         {
-            A->prox = cria_aresta(A->prox,y,n,G);
+            A->next = create_edge(A->next,y,n,G);
         }
     }
     return A;
 
 }
 
-void inserirAresta(Grid *G , int y, int n,Grid *G1)
+void insertEdge(Grid *G , int y, int n,Grid *G1)
 {
 
     if(G == NULL)
     {
-        printf("Impossivel Tarefa\n");
+        printf("Impossivel Task\n");
         exit(1);//FLAG ERRO
     }
 
     if(G->numPos != y)
-        inserirAresta(G->prox,y,n,G1);
+        insertEdge(G->next,y,n,G1);
     else
     {
         if((y>0) && (y<=n))
         {
             if((y%n)== 1)
             {
-                G->adj = cria_aresta(G->adj,y+1,n,G1);
-                G->adj = cria_aresta(G->adj,y+n,n,G1);
+                G->adj = create_edge(G->adj,y+1,n,G1);
+                G->adj = create_edge(G->adj,y+n,n,G1);
             }
             else if((y%n)== 0)
             {
-                G->adj = cria_aresta(G->adj,y-1,n,G1);
-                G->adj = cria_aresta(G->adj,y+n,n,G1);
+                G->adj = create_edge(G->adj,y-1,n,G1);
+                G->adj = create_edge(G->adj,y+n,n,G1);
             }
             else
             {
-                G->adj = cria_aresta(G->adj,y+1,n,G1);
-                G->adj = cria_aresta(G->adj,y-1,n,G1);
-                G->adj = cria_aresta(G->adj,y+n,n,G1);
+                G->adj = create_edge(G->adj,y+1,n,G1);
+                G->adj = create_edge(G->adj,y-1,n,G1);
+                G->adj = create_edge(G->adj,y+n,n,G1);
             }
         }
 
@@ -195,41 +183,41 @@ void inserirAresta(Grid *G , int y, int n,Grid *G1)
         {
             if((y%n)== 1)
             {
-                G->adj = cria_aresta(G->adj,y+1,n,G1);
-                G->adj = cria_aresta(G->adj,y-n,n,G1);
+                G->adj = create_edge(G->adj,y+1,n,G1);
+                G->adj = create_edge(G->adj,y-n,n,G1);
             }
             else if((y%n)== 0)
             {
-                G->adj = cria_aresta(G->adj,y-1,n,G1);
-                G->adj = cria_aresta(G->adj,y-n,n,G1);
+                G->adj = create_edge(G->adj,y-1,n,G1);
+                G->adj = create_edge(G->adj,y-n,n,G1);
             }
             else
             {
-                G->adj = cria_aresta(G->adj,y+1,n,G1);
-                G->adj = cria_aresta(G->adj,y-1,n,G1);
-                G->adj = cria_aresta(G->adj,y-n,n,G1);
+                G->adj = create_edge(G->adj,y+1,n,G1);
+                G->adj = create_edge(G->adj,y-1,n,G1);
+                G->adj = create_edge(G->adj,y-n,n,G1);
             }
         }
         else
         {
             if((y%n)== 1)
             {
-                G->adj = cria_aresta(G->adj,y+1,n,G1);
-                G->adj = cria_aresta(G->adj,y+n,n,G1);
-                G->adj = cria_aresta(G->adj,y-n,n,G1);
+                G->adj = create_edge(G->adj,y+1,n,G1);
+                G->adj = create_edge(G->adj,y+n,n,G1);
+                G->adj = create_edge(G->adj,y-n,n,G1);
             }
             else if((y%n)== 0)
             {
-                G->adj = cria_aresta(G->adj,y-1,n,G1);
-                G->adj = cria_aresta(G->adj,y+n,n,G1);
-                G->adj = cria_aresta(G->adj,y-n,n,G1);
+                G->adj = create_edge(G->adj,y-1,n,G1);
+                G->adj = create_edge(G->adj,y+n,n,G1);
+                G->adj = create_edge(G->adj,y-n,n,G1);
             }
             else
             {
-                G->adj = cria_aresta(G->adj,y+1,n,G1);
-                G->adj = cria_aresta(G->adj,y-1,n,G1);
-                G->adj = cria_aresta(G->adj,y+n,n,G1);
-                G->adj = cria_aresta(G->adj,y-n,n,G1);
+                G->adj = create_edge(G->adj,y+1,n,G1);
+                G->adj = create_edge(G->adj,y-1,n,G1);
+                G->adj = create_edge(G->adj,y+n,n,G1);
+                G->adj = create_edge(G->adj,y-n,n,G1);
             }
         }
     }
@@ -238,8 +226,8 @@ void inserirAresta(Grid *G , int y, int n,Grid *G1)
 
 int AStar(Grid *G,int PosX, int PosO)
 {
-    Lista *OpenList;
-    ListaG *ClosedList;
+    List *OpenList;
+    ListG *ClosedList;
     Grid  *aux;
     Grid  *ini;
     Grid  *fim;
@@ -253,23 +241,23 @@ int AStar(Grid *G,int PosX, int PosO)
     int custo = 0;
     int sair = 0;
 
-    Pai = cria_No(Pai);
+    Pai = createNode(Pai);
     Pai->CustP = 0;
 
     i = 0;
     k = 0;
     iantes = 0;
 
-    OpenList = ((Lista*)malloc(sizeof(G)));
-    ClosedList = ((ListaG*)malloc(sizeof(ListaG)));
+    OpenList = ((List*)malloc(sizeof(G)));
+    ClosedList = ((ListG*)malloc(sizeof(ListG)));
 
     while(ini->numPos!= PosO)
     {
-        ini = ini->prox;
+        ini = ini->next;
     }
     while(fim->numPos!= PosX)
     {
-        fim = fim->prox;
+        fim = fim->next;
     }
 
     do
@@ -296,8 +284,8 @@ int AStar(Grid *G,int PosX, int PosO)
             int custoH = abs(fim->X - aux->adj->X) + abs(fim->Y - aux->adj->Y);
             aux->adj->custoF = custoH + custoG;
             OpenList[i] = aux->adj;
-            OpenList = ((Lista*)realloc(OpenList,(i + 4)*sizeof(G)));
-            aux->adj = aux->adj->prox;
+            OpenList = ((List*)realloc(OpenList,(i + 4)*sizeof(G)));
+            aux->adj = aux->adj->next;
             i++;
         }
         int minimo = Infinity;
@@ -319,7 +307,7 @@ int AStar(Grid *G,int PosX, int PosO)
             }
         while(percorre->numPos != OpenList[pos]->A.ID)
         {
-            percorre = percorre->prox;
+            percorre = percorre->next;
         }
         ClosedList[k] = percorre;
         if(ClosedList[k]->G.label == 'V')
@@ -330,7 +318,7 @@ int AStar(Grid *G,int PosX, int PosO)
         {
             custo+=2;
         }
-        ClosedList = ((ListaG*)realloc(ClosedList,(k + 2)*sizeof(ListaG)));
+        ClosedList = ((ListG*)realloc(ClosedList,(k + 2)*sizeof(ListG)));
         ini = percorre;
         percorre = G;
         k++;
@@ -356,7 +344,7 @@ int AStar(Grid *G,int PosX, int PosO)
             }
             else if(ClosedList[c]->G.numPos != aux->numPos)
             {
-                aux = aux->prox;
+                aux = aux->next;
             }
         }
     }
@@ -399,7 +387,7 @@ int main()
         while(ch == '\n');
         if(G == NULL)
         {
-            G = cria_No(G);
+            G = createNode(G);
             G->numPos = j;
             G->label = ch;
             if((n<999)&&(n>99))
@@ -410,12 +398,12 @@ int main()
                 fseek(pfile,2,SEEK_SET);
         }
         else
-            inserirNo(G,j,ch);
+            insertNode(G,j,ch);
     }
     aux=G;
-    while(aux->prox != NULL)
+    while(aux->next != NULL)
     {
-        aux = aux->prox;
+        aux = aux->next;
     }
     fseek(pfile,0,SEEK_END);
     fscanf(pfile,"%c",&ch);
@@ -429,7 +417,7 @@ int main()
             printf("\n");
         imprimeNoCH(aux);
         imprimeNo(aux);
-        aux = aux->prox;
+        aux = aux->next;
         j++;
     }
     */
@@ -438,7 +426,7 @@ int main()
     j=1;
     while(j<=i)
     {
-        inserirAresta(G,j,n,G);
+        insertEdge(G,j,n,G);
         j++;
     }
 
@@ -450,10 +438,10 @@ int main()
         while(Naux != NULL)
         {
             printf("%d%c<X%dY%d> ", Naux->ID,Naux->label,Naux->X,Naux->Y);
-            Naux = Naux->prox;
+            Naux = Naux->next;
         }
         printf("\n");
-        aux = aux->prox;
+        aux = aux->next;
     }
     while(aux != NULL);
 */
@@ -468,13 +456,13 @@ int main()
         {
             posO = aux->numPos;
         }
-        aux = aux->prox;
+        aux = aux->next;
     }
 
     int custo = AStar(G,posX,posO);
 
 
-//IMPRIMIR NO ARQUIVO
+/*  Print on the archive */
 
     fprintf(pfile2,"%d",custo);
 
@@ -493,7 +481,7 @@ int main()
             fprintf(pfile2,"\n");
         }
         imprimeNoCH(aux,pfile2);
-        aux = aux->prox;
+        aux = aux->next;
         j++;
     }
 
